@@ -12,14 +12,20 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Collections;
 
 public class DegreePlanner {
 
     private CourseGraph graph;
+    private HashMap<Course, Integer> prerequisiteCounts;
 
     public DegreePlanner() {
 
         graph = new CourseGraph();
+        prerequisiteCounts = new HashMap<>();
     }
 
     // Reads the degree file and builds the graph
@@ -42,6 +48,7 @@ public class DegreePlanner {
                     Course course = new Course(code.trim());
 
                     graph.addCourse(course);
+                    prerequisiteCounts.put(course, 0);
                 }
             }
 
@@ -60,6 +67,9 @@ public class DegreePlanner {
                     Course prerequisite = graph.getCourse(parts[i].trim());
 
                     graph.addEdge(prerequisite, course);
+
+                    int currentCount = prerequisiteCounts.get(course);
+                    prerequisiteCounts.put(course, currentCount + 1);
                 }
             }
 
@@ -71,8 +81,91 @@ public class DegreePlanner {
         }
     }
 
+    // Generates the study plan using prerequisite counts
+    public ArrayList<ArrayList<Course>> generateStudyPlan(int maxCoursesPerStudyPeriod) {
+
+        ArrayList<ArrayList<Course>> studyPlan = new ArrayList<>();
+
+        // Stores completed courses
+        HashSet<Course> completedCourses = new HashSet<>();
+
+        // Continue until all courses are completed
+        while (completedCourses.size() < graph.getCourses().size()) {
+
+            ArrayList<Course> availableCourses = new ArrayList<>();
+
+            // Finds courses with no remaining prerequisites
+            for (Course course : prerequisiteCounts.keySet()) {
+
+                if (prerequisiteCounts.get(course) == 0
+                        && !completedCourses.contains(course)) {
+
+                    availableCourses.add(course);
+                }
+            }
+
+            // Sorts courses by how many future courses they unlock
+            Collections.sort(availableCourses,
+                    (course1, course2) -> {
+                        int course1Unlocks = graph.getAdjacencyList().get(course1).size();
+                        int course2Unlocks = graph.getAdjacencyList().get(course2).size();
+
+                        if (course1Unlocks != course2Unlocks) {
+                            return course2Unlocks - course1Unlocks;
+                        }
+
+                        // Fallback to alphabetical
+                        return course1.getCode().compareTo(course2.getCode());
+                    });
+
+            // Stops if no courses are available
+            if (availableCourses.isEmpty()) {
+
+                System.out.println("Invalid degree structure.");
+                break;
+            }
+
+            ArrayList<Course> studyPeriod = new ArrayList<>();
+
+            // Adds courses up to the study period limit
+            for (int i = 0;
+                 i < availableCourses.size()
+                         && i < maxCoursesPerStudyPeriod;
+                 i++) {
+
+                Course course = availableCourses.get(i);
+
+                studyPeriod.add(course);
+                completedCourses.add(course);
+            }
+
+            // Updates prerequisite counts after completing courses
+            for (Course completed : studyPeriod) {
+
+                ArrayList<Course> unlockedCourses =
+                        graph.getAdjacencyList().get(completed);
+
+                for (Course unlocked : unlockedCourses) {
+
+                    int currentCount = prerequisiteCounts.get(unlocked);
+
+                    prerequisiteCounts.put(unlocked, currentCount - 1);
+                }
+            }
+
+            studyPlan.add(studyPeriod);
+        }
+
+        return studyPlan;
+    }
+
     public CourseGraph getGraph() {
 
         return graph;
+    }
+
+    public HashMap<Course, Integer> getPrerequisiteCounts() {
+
+        return prerequisiteCounts;
     }
 }
