@@ -66,10 +66,21 @@ public class DegreePlanner {
 
                     Course prerequisite = graph.getCourse(parts[i].trim());
 
-                    graph.addEdge(prerequisite, course);
+                    // Only adds the edge if the prerequisite exists
+                    if (prerequisite != null && course != null) {
 
-                    int currentCount = prerequisiteCounts.get(course);
-                    prerequisiteCounts.put(course, currentCount + 1);
+                        graph.addEdge(prerequisite, course);
+
+                        int currentCount = prerequisiteCounts.get(course);
+
+                        prerequisiteCounts.put(course, currentCount + 1);
+                    }
+                    else {
+
+                        System.out.println("Invalid prerequisite found in file: " + parts[i].trim());
+                    }
+
+
                 }
             }
 
