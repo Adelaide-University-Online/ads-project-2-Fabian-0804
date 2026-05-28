@@ -10,17 +10,26 @@
  **/
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Runner {
     
     public static void main(String[] args) {
 
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter degree file name: ");
+        String filename = scanner.nextLine();
+
+        System.out.print("Enter maximum courses per study period: ");
+        int maxCourses = scanner.nextInt();
+
         DegreePlanner planner = new DegreePlanner();
 
-        planner.loadFile("XBDA.txt");
+        planner.loadFile(filename);
 
         ArrayList<ArrayList<Course>> studyPlan =
-                planner.generateStudyPlan(2);
+                planner.generateStudyPlan(maxCourses);
 
         // Displays the study plan
         for (int i = 0; i < studyPlan.size(); i++) {
@@ -28,6 +37,8 @@ public class Runner {
             System.out.println("Study Period " + (i + 1) + ": "
                     + studyPlan.get(i));
         }
+
+        scanner.close();
         
     }
     
