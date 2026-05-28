@@ -11,6 +11,7 @@
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Collections;
 
 public class CourseGraph {
 
@@ -60,9 +61,26 @@ public class CourseGraph {
     // Displays the graph as an adjacency list
     public void displayGraph() {
 
-        for (Course course : adjacencyList.keySet()) {
+        ArrayList<Course> sortedCourses =
+                new ArrayList<>(adjacencyList.keySet());
 
-            System.out.println(course + " -> " + adjacencyList.get(course));
+        // Sorts courses alphabetically
+        Collections.sort(sortedCourses,
+                (course1, course2) ->
+                        course1.getCode().compareTo(course2.getCode()));
+
+        for (Course course : sortedCourses) {
+
+            ArrayList<Course> connectedCourses =
+                    new ArrayList<>(adjacencyList.get(course));
+
+            // Sorts connected courses alphabetically
+            Collections.sort(connectedCourses,
+                    (course1, course2) ->
+                            course1.getCode().compareTo(course2.getCode()));
+
+            System.out.println(course + " -> "
+                    + connectedCourses);
         }
     }
 }

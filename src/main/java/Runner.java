@@ -24,6 +24,13 @@ public class Runner {
         System.out.print("Enter maximum courses per study period: ");
         int maxCourses = scanner.nextInt();
 
+        if (maxCourses < 1) {
+
+            System.out.println("Maximum courses must be at least 1.");
+            scanner.close();
+            return;
+        }
+
         DegreePlanner planner = new DegreePlanner();
 
         planner.loadFile(filename);
@@ -33,6 +40,8 @@ public class Runner {
 
         ArrayList<ArrayList<Course>> studyPlan =
                 planner.generateStudyPlan(maxCourses);
+
+        System.out.println("\nGenerated Study Plan:");
 
         // Displays the study plan
         for (int i = 0; i < studyPlan.size(); i++) {
