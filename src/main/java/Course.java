@@ -1,3 +1,14 @@
+/**
+ * File: Course.java
+ * Description: Represents a course object used in the degree graph.
+ * Author: Fabian DiGrazia
+ * Student ID: 2911898
+ * Email ID: diyfy006
+ * AI Tool Used:
+ * This is my own work as defined by
+ *    the University's Academic Integrity Policy.
+ **/
+
 import java.util.Objects;
 
 public class Course {
