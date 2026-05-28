@@ -28,6 +28,9 @@ public class Runner {
 
         planner.loadFile(filename);
 
+        System.out.println("\nGraph adjacency list:");
+        planner.getGraph().displayGraph();
+
         ArrayList<ArrayList<Course>> studyPlan =
                 planner.generateStudyPlan(maxCourses);
 

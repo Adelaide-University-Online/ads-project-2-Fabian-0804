@@ -56,4 +56,13 @@ public class CourseGraph {
 
         return courses;
     }
+
+    // Displays the graph as an adjacency list
+    public void displayGraph() {
+
+        for (Course course : adjacencyList.keySet()) {
+
+            System.out.println(course + " -> " + adjacencyList.get(course));
+        }
+    }
 }
